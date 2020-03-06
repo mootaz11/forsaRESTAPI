@@ -4,7 +4,7 @@ const userModel= require("../models/user");
 
 exports.createskill=function(req,res){
     const skill  = new skillModel({
-        _id:mongoose.Types.ObjectId(),
+        _id:new mongoose.Types.ObjectId(),
         title:req.body.title,
         category:req.body.category,
         skills:req.body.skills,

@@ -4,15 +4,16 @@ const userModel= require("../models/user");
 
 exports.createEducation=function(req,res){
     const education = new educationModel({
-        _id:mongoose.Types.ObjectId(),
+        _id:new mongoose.Types.ObjectId(),
         title:req.body.title,
         duration:req.body.duration,
         description:req.body.description
 
     });
     education.save()
-    .then(education=>{
+    .then(education => {
         if(education){
+            
             userModel.findByIdAndUpdate(req.params.iduser,{$push:{educations:education}})
             .exec()
             .then(result=>{

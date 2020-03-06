@@ -1,4 +1,4 @@
-const userModel = require("../models/user");
+const companyModel = require("../models/company");
 const bcrypt = require('bcrypt');
 const mongoose = require("mongoose");
 const fs = require("fs");
@@ -6,16 +6,16 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 
 exports.showRequests=function(req,res){
-    userModel.findById(req.params.id)
+    companyModel.findById(req.params.id)
     .exec()
-    .then(user=>{
-        if(user)
+    .then(company=>{
+        if(company)
         {   
-            const requests= user.ReceivedRequests;
+            const requests= company.ReceivedRequests;
             return res.status(200).json({message:'requests found',requests});
         }
         else {
-            return res.status(404).json({message:'user not found'});
+            return res.status(404).json({message:'company not found'});
         }
     })
     .catch(err=>{
@@ -27,7 +27,8 @@ exports.showRequests=function(req,res){
 
 
 exports.searchFriend=function(req,res){
-    userModel.find({"fullname": /req.body.fullname/})
+    company
+Model.find({"fullname": /req.body.fullname/})
     .exec()
     .then(friends=>{
         if(friends.length>0)
@@ -45,13 +46,13 @@ exports.searchFriend=function(req,res){
     }
     
 
-exports.getAllusers=function(req,res){
-userModel.find()
+exports.getAllcompanies=function(req,res){
+companyModel.find()
 .exec()
-.then(users=>{
+.then(companies=>{
 
-    if(users.length>0){
-        return res.status(200).json({users});
+    if(companies.length>0){
+        return res.status(200).json({companies});
     }
     else {
         return res.status(200).json({});
@@ -64,14 +65,13 @@ userModel.find()
 }
 
 exports.signup=function(req,res){
-
-    userModel.findOne({email:req.body.email})
+companyModel.findOne({email:req.body.email})
 .exec()
-.then(user=>{
-    if(user){
+.then(company=>{
+    if(company)
+    {
         res.status(409).json({message:'mail exists'});
     }
-
     else {
         bcrypt.hash(req.body.password,10, async (err,hashedPass)=>
         {
@@ -79,16 +79,17 @@ exports.signup=function(req,res){
                 return res.status(500).json({error:err})
             }
             else {
-                   const user = new userModel({
+                   const company = new companyModel({
                     _id:new mongoose.Types.ObjectId(),
-                    fullname : req.body.fullname,
+                    CompanyName : req.body.CompanyName,
                     country:req.body.country,
                     email:req.body.email,
                     password:hashedPass,
                     image:req.file.path,
-                    title:''                  
-
-                });
+                    Location:req.body.location,
+                    totalEmployees:req.body.employeesNumber,
+                    foundationDate:req.body.foundationDate
+            });
 
 
 
@@ -96,7 +97,7 @@ exports.signup=function(req,res){
                 service: 'gmail',secure:false,    requireTLS: true,
     
                 auth: {
-                  user: 'amaramootaz11@gmail.com',
+                  company: 'amaramootaz11@gmail.com',
                   pass: '25417290'
                 }
               });
@@ -106,7 +107,7 @@ exports.signup=function(req,res){
                 to: req.body.email,
                 subject: ' forsa account confirmation : ',
                 text: 'please confirm your account by clicking this link below',
-                html:'<a href="http://localhost:4200/#/account/loginConfirm/'+user._id+"\">"+"verify me </a>"
+                html:'<a href="http://localhost:4200/#/account/loginConfirm/'+company._id+"\">"+"verify me </a>"
     
               };
               
@@ -120,9 +121,9 @@ exports.signup=function(req,res){
     
               });
 
-               user.save().then(result=>{
+               company.save().then(result=>{
                    console.log(result)
-                       res.status(201).json({message:'user Created',user})
+                       res.status(201).json({message:'company Created',company})
                }).catch(err=>{
                 console.log(err)
                    res.status(500).json({error:err});
@@ -139,42 +140,79 @@ exports.signup=function(req,res){
 }
 
 
-exports.updateTitle=function(req,res){
-    userModel.findByIdAndUpdate(req.params.userid,{$set:{title:req.body.title}},(err,result)=>{
-        if(err){
-            return Error('error has been occured');
-        }
+
+exports.updateTotalEmployees=function(req,res){
+    companyModel.findByIdAndUpdate(req.params.companyid,{$set:{totalEmployees:req.body.totalEmployees}})
+    .exec()
+    .then(result=>{
         if(result){
-            return res.status(200).json({message:'title updated'})
-        }
-        else 
-        {
-            return res.status(400).json({message:'update failed'});
-        }
-
-    });
+            return res.status(200).json({message:'number of employees updated',result});
+    }
+    else {
+        return res.status(400).json({message:'update failed'});
+    }
 }
+)
+    .catch(err=>{
+        return res.status(500).json(err);
+    })
+}
+exports.updateLocation=function(req,res){
+    companyModel.findByIdAndUpdate(req.params.companyid,{$set:{Location:req.body.Location}})
+    .exec()
+    .then(result=>{
+        if(result){
+            return res.status(200).json({message:' location updated',result});
+    }
+    else {
+        return res.status(400).json({message:'update failed'});
+    }
+}
+)
+    .catch(err=>{
+        return res.status(500).json(err);
+    })
 
+}
+exports.updateEstablishedSince=function(req,res){
+    
+    companyModel.findByIdAndUpdate(req.params.companyid,{$set:{foundationDate:req.body.foundationDate}})
+    .exec()
+    .then(result=>{
+        if(result){
+            return res.status(200).json({message:' foundation Date updated',result});
+    }
+    else {
+        return res.status(400).json({message:'update failed'});
+    }
+}
+)
+    .catch(err=>{
+        return res.status(500).json(err);
+    })
+
+}
 exports.login=function(req,res)
 {
 
-userModel.findOne({email:req.body.email})
+companyModel.findOne({email:req.body.email})
 .exec()
-.then(user=>{
-    if(user)
+.then(company=>{
+    if(company
+)
     {   
-        if(user.verified==false)
+        if(company.verified==false)
         {
-            return res.status(401).json({message:'user not verified'});
+            return res.status(401).json({message:'company not verified'});
         }
         else 
         {
-            bcrypt.compare(req.body.password,user.password,(err,same)=>{
+            bcrypt.compare(req.body.password,company.password,(err,same)=>{
                 if(err){
                     throw err;
                 }
                 if(same){
-                 const token=jwt.sign({username:user.fullname,user_id:user._id},"Secret",{expiresIn:60*60*60})
+                 const token=jwt.sign({companyname:company.fullname,company_id:company._id},"Secret",{expiresIn:60*60*60})
                     return res.status(200).json({message:'login successfully',token});
                 }
                 else 
@@ -196,16 +234,16 @@ userModel.findOne({email:req.body.email})
 
 exports.getProfile=function(req,res){
 
-    userModel.findById(req.params.iduser)
+    companyModel.findById(req.params.idcompany)
     .populate('experiences','title description')
     .exec()
-    .then(user=>{
-        if(user)
+    .then(company=>{
+        if(company)
         {
-            return res.status(200).json(user);
+            return res.status(200).json(company);
         }
         else {
-            return res.status(404).json({message:'user not found'});
+            return res.status(404).json({message:'company not found'});
 
         }
     })
@@ -215,7 +253,8 @@ exports.getProfile=function(req,res){
 }
 
 exports.updateInfo=function(req,res){
-    userModel.update({_id:req.params.iduser},{$set:{fullname:req.body.fullname,country:req.body.country,company:req.body.company}})
+
+    companyModel.update({_id:req.params.idcompany},{$set:{CompanyName:req.body.CompanyName,country:req.body.country}})
     .exec()
     .then(result=>{
         if(result){
@@ -229,15 +268,18 @@ exports.updateInfo=function(req,res){
         return res.status(500).json({err});
     })
 }
+
 exports.loginGoogle=function(req,res){}
 
+
 exports.updatepassword=function(req,res){
-    userModel.findById(req.params.iduser)
+
+    companyModel.findById(req.params.idcompany)
     .exec()
-    .then(user=>{
-        if(user)
+    .then(company=>{
+        if(company)
         {
-            bcrypt.compare(req.body.oldpassword,user.password,(err,same)=>{
+            bcrypt.compare(req.body.oldpassword,company.password,(err,same)=>{
                 if(err){
                     throw err;
                 }
@@ -250,7 +292,7 @@ exports.updatepassword=function(req,res){
                             
                             if(encrypted)
                             {
-                                userModel.findByIdAndUpdate(req.body.userid,{$set:{password:encrypted}})
+                                companyModel.findByIdAndUpdate(req.body.companyid,{$set:{password:encrypted}})
                                 .exec()
                                 .then(result=>{
                                     if(result){
@@ -284,14 +326,8 @@ exports.updatepassword=function(req,res){
             })
         }
         else {
-            return res.status(404).json({message:"user not found"});
-
-        }
-
-
-    })
-
-
+            return res.status(404).json({message:"company not found"});}
+            })
     .catch(err=>{
         return res.status(500).json({err});
 
@@ -300,16 +336,16 @@ exports.updatepassword=function(req,res){
 
 
 exports.updateImage=function(req,res){
-    userModel.findById(req.params.iduser)
+    companyModel.findById(req.params.idcompany)
     .exec()
-    .then(user=>{
-        if(user)
+    .then(company=>{
+        if(company)
         {
-            userModel.findByIdAndUpdate(req.params.iduser,{$set:{image:req.file.path}})
+            companyModel.findByIdAndUpdate(req.params.idcompany,{$set:{image:req.file.path}})
             .exec()
             .then(result=>{
                 if(result){
-                    path="C:\\Users\\pc\\Desktop\\FORSA\\"+user.image;
+                    path="C:\\users\\pc\\Desktop\\FORSA\\"+company.image;
                     fs.unlink(path,err=>{
                         if(err){
                             throw err;
@@ -335,17 +371,17 @@ exports.updateImage=function(req,res){
 
 
 exports.updateCover=function(req,res){
-    userModel.findById(req.params.iduser)
+    companyModel.findById(req.params.idcompany)
     .exec()
-    .then(user=>{
-        if(user)
+    .then(company=>{
+        if(company)
         {   
-            userModel.findByIdAndUpdate(req.params.iduser,{$set:{cover:req.file.path}})
+            companyModel.findByIdAndUpdate(req.params.idcompany,{$set:{cover:req.file.path}})
             .exec()
             .then(result=>{
                 if(result){
-                    if(user.cover!==""){
-                    path="C:\\Users\\pc\\Desktop\\FORSA\\"+user.cover;
+                    if(company.cover!==""){
+                    path="C:\\userss\\pc\\Desktop\\FORSA\\"+company.cover;
                     fs.unlink(path,err=>{
                         if(err){
                             throw err;
@@ -376,7 +412,7 @@ exports.updateCover=function(req,res){
 
 
 exports.updateEmail=function(req,res){
-    userModel.findByIdAndUpdate(req.params.iduser,{$set:{email:req.body.email}})
+    companyModel.findByIdAndUpdate(req.params.idcompany,{$set:{email:req.body.email}})
     .exec()
     .then(result=>{
         if(result){
@@ -384,7 +420,7 @@ exports.updateEmail=function(req,res){
                 service: 'gmail',secure:false,    requireTLS: true,
     
                 auth: {
-                  user: 'amaramootaz11@gmail.com',
+                  company: 'amaramootaz11@gmail.com',
                   pass: '25417290'
                 }
               });
@@ -393,22 +429,16 @@ exports.updateEmail=function(req,res){
                 to: req.body.email,
                 subject: ' forsa account confirmation : ',
                 text: 'please confirm your account by clicking this link below',
-                html:'<a href="http://localhost:4200/#/account/loginConfirm/'+req.params.iduser+"\">"+"verify me </a>"
-    
-              };
-              
+                html:'<a href="http://localhost:4200/#/account/loginConfirm/'+req.params.idcompany+"\">"+"verify me </a>"
+                };
               transporter.sendMail(mailOptions, function(error, info){
                 if (error) {
                     console.log(error)
                 } else {
-
-                  console.log('Email has been sent successfully');
+                console.log('Email has been sent successfully');
                   return res.status(200).json({message:'update done successfully'});
-
-
                 }
-    
-              });
+            });
         }
         else {
             return res.status(401).json({message:'update failed'});
@@ -421,7 +451,8 @@ exports.updateEmail=function(req,res){
 
 exports.DesactivateAccount=function(req,res){
 
-userModel.findByIdAndUpdate(req.params.iduser,{$set:{disactivated:true}},(err,result)=>{
+companyModel.findByIdAndUpdate(req.params.idcompany
+,{$set:{disactivated:true}},(err,result)=>{
     if(err)
     {
         return res.status(500).json({err});
@@ -435,21 +466,20 @@ userModel.findByIdAndUpdate(req.params.iduser,{$set:{disactivated:true}},(err,re
 })
 }
 exports.updateStatus=function(req,res){
-
-   userModel.findById(req.params.iduser)
+companyModel.findById(req.params.idcompany)
    .exec()
-   .then(user=>{
-       if(user.status===1){
-           user.status=0;
+   .then(company=>{
+       if(company.status===1){
+           company.status=0;
        }
        else {
-           user.status=1;
+           company.status=1;
        }
-    user.save((err,userupdated)=>{
+    company.save((err,companyupdated)=>{
         if(err){
             return res.status(500).json(err);
                 }
-        if(userupdated){
+        if(companyupdated){
             return res.status(200).json({message:"update done"});
         }
         else {

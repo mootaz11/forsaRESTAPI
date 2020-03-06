@@ -4,13 +4,15 @@ const userModel= require("../models/user");
 
 exports.createJob=function(req,res){
     const job = new jobModel({
-        _id:mongoose.Types.ObjectId(),
+        _id:new mongoose.Types.ObjectId(),
         title:req.body.title,
         category:req.body.category,
         skills:req.body.skills,
         price:req.body.price,
         time:req.body.time,
-        description:req.body.description
+        description:req.body.description,
+        likes:[]
+
 
     });
     job.save()

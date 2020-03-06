@@ -4,12 +4,13 @@ const userModel= require("../models/user");
 
 exports.createExperience=function(req,res){
     const experience = new experienceModel({
-        _id:mongoose.Types.ObjectId(),
+        _id:new mongoose.Types.ObjectId(),
         title:req.body.title,
         duration:req.body.duration,
         description:req.body.description
 
     });
+    
     experience.save()
     .then(experience=>{
         if(experience){

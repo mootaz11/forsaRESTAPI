@@ -2,15 +2,27 @@ const projectModel = require("../models/project");
 const mongoose = require("mongoose");
 const userModel= require("../models/user");
 
+
+exports.addLike=function(req,res){
+
+    projectModel.findByIdAndUpdate(req.params.idproject,{$push:{likes:{username:req.body.username,image:req.body.image}}})
+
+
+}
+
+
+
+
 exports.createProject=function(req,res){
     const project  = new projectModel({
-        _id:mongoose.Types.ObjectId(),
+        _id:new mongoose.Types.ObjectId(),
         title:req.body.title,
         category:req.body.category,
         skills:req.body.skills,
         price:req.body.price,
         toprice:req.body.time,
-        description:req.body.description
+        description:req.body.description,
+        likes:[]
 
     });
     project.save()
