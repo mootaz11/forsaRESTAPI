@@ -8,7 +8,11 @@ const JobSchema = new mongoose.Schema({
     price:{type:Number,required:true},
     time:{type:String,required:true},
     description:{type:String},
-    user : {type:mongoose.Schema.Types.ObjectId,ref:'user'}
+    user : {type:mongoose.Schema.Types.ObjectId,ref:'user'},
+    comments:[{type:mongoose.Schema.Types.ObjectId,ref:'comment'}],
+    likes:[{username:String,image:String}],
+    company:{type:mongoose.Schema.Types.ObjectId,ref:'company'}
+
    
 });
 

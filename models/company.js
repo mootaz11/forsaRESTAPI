@@ -9,7 +9,18 @@ const CompanySchema = new mongoose.Schema({
     password:{type:String,required:true},
     image:{type:String},
     cover:{type:String},
-    verfied:{type:Boolean,default:false}
+    verfied:{type:Boolean,default:false},
+    foundationDate:String,
+    totalEmployees:Number,
+    Location:String,
+    jobs:[{type:mongoose.Schema.Types.ObjectId,ref:'job'}],
+    friendlist:[{name:String,iduser:mongoose.Schema.Types.ObjectId,imageFriend:String}],
+    SentRequests:[{name:String,iduser:mongoose.Schema.Types.ObjectId,imageFriend:String}],
+    ReceivedRequests:[{name:String,iduser:mongoose.Schema.Types.ObjectId,imageFriend:String}],
+    comments:[{type:mongoose.Schema.Types.ObjectId,ref:'comment'}],
+    
+
+
 });
 
 module.exports=mongoose.model('company',CompanySchema);

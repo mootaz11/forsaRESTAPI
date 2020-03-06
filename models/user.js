@@ -10,14 +10,20 @@ const UserSchema = new mongoose.Schema({
     image:{type:String},
     cover:{type:String,default:""},
     status:{type:Number,default:1},
+    title:String,
     verified:{type:Boolean,default:false},
     disactivated:{type:Boolean,default:false},
     experiences:[{type:mongoose.Schema.Types.ObjectId,ref:'experience'}],
     educations:[{type:mongoose.Schema.Types.ObjectId,ref:'education'}],
     jobs:[{type:mongoose.Schema.Types.ObjectId,ref:'job'}],
-    friendlist:[{name:String,id:mongoose.Schema.Types.ObjectId,imageFriend:String}],
-    SentRequests:[{name:String,id:mongoose.Schema.Types.ObjectId,imageFriend:String}],
-    ReceivedRequests:[{name:String,id:mongoose.Schema.Types.ObjectId,imageFriend:String}]
+    friendlist:[{name:String,iduser:mongoose.Schema.Types.ObjectId,imageFriend:String}],
+    SentRequests:[{name:String,iduser:mongoose.Schema.Types.ObjectId,imageFriend:String}],
+    ReceivedRequests:[{name:String,iduser:mongoose.Schema.Types.ObjectId,imageFriend:String}],
+    comments:[{type:mongoose.Schema.Types.ObjectId,ref:'comment'}],
+    skills:[{type:mongoose.Schema.Types.ObjectId,ref:'skill'}],
+    projects:[{type:mongoose.Schema.Types.ObjectId,ref:'project'}],
+
+
 });
 
 

@@ -14,6 +14,6 @@ router.post('/:iduser/updatepassword',userController.updatepassword);
 router.post('/:iduser/updateinfo',userController.updateInfo);
 router.post('/:iduser/desactivateAccount',userController.DesactivateAccount);
 router.post('/:iduser/updateStatus',userController.updateStatus);
-
+router.get('/loginWithgoogle',userController.loginGoogle);
 module.exports=router;
 
