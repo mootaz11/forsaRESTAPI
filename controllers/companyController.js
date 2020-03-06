@@ -27,8 +27,7 @@ exports.showRequests=function(req,res){
 
 
 exports.searchFriend=function(req,res){
-    company
-Model.find({"fullname": /req.body.fullname/})
+    companyModel.find({"fullname": /req.body.fullname/})
     .exec()
     .then(friends=>{
         if(friends.length>0)
