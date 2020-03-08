@@ -15,5 +15,6 @@ router.post('/:iduser/updateinfo',userController.updateInfo);
 router.post('/:iduser/desactivateAccount',userController.DesactivateAccount);
 router.post('/:iduser/updateStatus',userController.updateStatus);
 router.get('/loginWithgoogle',userController.loginGoogle);
+router.get('/:iduser/getFeeds',userController.getFeeds);
 module.exports=router;
 

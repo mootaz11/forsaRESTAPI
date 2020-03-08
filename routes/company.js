@@ -3,6 +3,8 @@ const router = express.Router();
 const companyController=require("../controllers/companyController");
 const uploadImage = require("../config/multer");
 
+
+
 router.get("/companys",companyController.getAllcompanies);
 router.post('/signup',uploadImage.single("image"),companyController.signup);
 router.post("/login",companyController.login);
@@ -18,5 +20,6 @@ router.get('/loginWithgoogle',companyController.loginGoogle);
 router.post("/updatelocation/:idcompany",companyController.updateLocation);
 router.post("/updateFoundationDate/:idcompany",companyController.updateEstablishedSince);
 router.post("/updateNumberofEmployees/:idcompany",companyController.updateTotalEmployees);
+
 module.exports=router;
 
