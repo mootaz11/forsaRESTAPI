@@ -2,6 +2,29 @@ const jobModel = require("../models/job");
 const mongoose = require("mongoose");
 const userModel= require("../models/user");
 
+
+exports.addLike=function(req,res){
+
+    jobModel.findByIdAndUpdate(req.params.idjob,{$push:{likes:{username:req.body.username,image:req.body.image}}})
+    .exec()
+    .then(result=>{
+        if(result){
+            return res.send(result);
+        }
+        else {
+            return res.status(400).json({message:'update failed'});
+        }
+    })
+    .catch(err=>{
+        return res.status(500).json(err);
+    });
+}
+
+
+
+
+
+
 exports.createJob=function(req,res){
     const job = new jobModel({
         _id:new mongoose.Types.ObjectId(),
@@ -11,7 +34,9 @@ exports.createJob=function(req,res){
         price:req.body.price,
         time:req.body.time,
         description:req.body.description,
-        likes:[]
+        likes:[],
+        createdAt:new Date().getTime()
+
 
 
     });

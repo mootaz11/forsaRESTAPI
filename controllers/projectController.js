@@ -6,12 +6,19 @@ const userModel= require("../models/user");
 exports.addLike=function(req,res){
 
     projectModel.findByIdAndUpdate(req.params.idproject,{$push:{likes:{username:req.body.username,image:req.body.image}}})
-
-
+    .exec()
+    .then(result=>{
+        if(result){
+            return res.send(result);
+        }
+        else {
+            return res.status(400).json({message:'update failed'});
+        }
+    })
+    .catch(err=>{
+        return res.status(500).json(err);
+    });
 }
-
-
-
 
 exports.createProject=function(req,res){
     const project  = new projectModel({
@@ -20,10 +27,10 @@ exports.createProject=function(req,res){
         category:req.body.category,
         skills:req.body.skills,
         price:req.body.price,
-        toprice:req.body.time,
+        toprice:req.body.toprice,
         description:req.body.description,
-        likes:[]
-
+        likes:[],
+        createdAt:new Date().getTime()
     });
     project.save()
     .then(project=>{

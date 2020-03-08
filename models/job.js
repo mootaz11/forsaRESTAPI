@@ -11,7 +11,8 @@ const JobSchema = new mongoose.Schema({
     user : {type:mongoose.Schema.Types.ObjectId,ref:'user'},
     comments:[{type:mongoose.Schema.Types.ObjectId,ref:'comment'}],
     likes:[{username:String,image:String}],
-    company:{type:mongoose.Schema.Types.ObjectId,ref:'company'}
+    company:{type:mongoose.Schema.Types.ObjectId,ref:'company'},
+    createdAt:Date
 
    
 });

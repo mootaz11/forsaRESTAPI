@@ -5,6 +5,40 @@ const fs = require("fs");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 
+
+
+exports.getFeeds=function(req,res)
+{
+    tabfeeds=[];
+userModel.findById(req.params.iduser)
+.exec()
+.then(user=>{
+    user.friendlist.forEach(element => {
+                userModel.findById(element.iduser)
+                .populate('jobs')
+                .populate('projects')
+                .exec()
+                .then(result=>{
+                    if(result){
+                        result.jobs.forEach(element=>{
+                            tabfeeds.push({job:element,userImage:user.image,userid:user._id,userCountry:user.country,userJob:user.title});
+                        })
+                        result.projects.forEach(element=>{
+                            tabfeeds.push({project:element,user:user.image,userid:user._id,userCountry:user.country,userJob:user.title});
+                        })
+                        return res.send(tabfeeds);
+
+                    }
+                    else {
+                        return res.send({message:'no feeds'});
+                    }                    
+                })
+                .catch(err=>{return res.status(500).json(err)})
+    });
+    
+})
+}
+
 exports.showRequests=function(req,res){
     userModel.findById(req.params.id)
     .exec()
@@ -86,7 +120,7 @@ exports.signup=function(req,res){
                     email:req.body.email,
                     password:hashedPass,
                     image:req.file.path,
-                    title:''                  
+                    title:" "                 
 
                 });
 

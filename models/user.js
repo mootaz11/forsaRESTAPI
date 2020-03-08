@@ -4,7 +4,6 @@ const UserSchema = new mongoose.Schema({
     _id:mongoose.Schema.Types.ObjectId,
     fullname:{type:String,required:true},
     country:{type:String,required:true},
-    Category:{type:String,required:true},
     email:{type:String,required:true},
     password:{type:String,required:true},
     image:{type:String},
