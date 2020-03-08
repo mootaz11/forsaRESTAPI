@@ -9,6 +9,9 @@ const cors = require("cors");
 const userRoute=require("./routes/user");
 const experienceRoute=require("./routes/experience");
 const friendRoute = require("./routes/friend");
+const jobRoute = require("./routes/job");
+const projectRoute = require("./routes/project");
+const companyRoute = require("./routes/company");
 
 
 const app=Express()
@@ -30,15 +33,20 @@ mongoose.connection.on('ok',()=>{console.log('connection done')})
 app.use('/uploads',Express.static('uploads'));
 
 
-//setting routes 
 
+//setting routes 
 app.use('/user',userRoute);
 app.use('/experience',experienceRoute);
 app.use('/friend',friendRoute);
+app.use('/company',companyRoute);
+app.use('/project',projectRoute);
+app.use('/job',jobRoute);
+
+
+
 
 
 app.set('port',process.env.port || 3000);
 app.listen(app.get('port'),()=>{
-    console.log(`server is running on port  ${app.get('port')}`)
-});
+    console.log(`server is running on port  ${app.get('port')}`)});
 
