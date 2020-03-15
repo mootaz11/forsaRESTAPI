@@ -30,6 +30,7 @@ exports.createProject=function(req,res){
         toprice:req.body.toprice,
         description:req.body.description,
         likes:[],
+        user:req.params.iduser,
         createdAt:new Date().getTime()
     });
     project.save()

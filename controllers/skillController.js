@@ -6,11 +6,7 @@ exports.createskill=function(req,res){
     const skill  = new skillModel({
         _id:new mongoose.Types.ObjectId(),
         title:req.body.title,
-        category:req.body.category,
-        skills:req.body.skills,
-        price:req.body.price,
-        toprice:req.body.time,
-        description:req.body.description
+        user:req.params.iduser
 
     });
     skill.save()
@@ -20,7 +16,7 @@ exports.createskill=function(req,res){
             .exec()
             .then(result=>{
                 if(result){
-                    return res.status(200).json({message:'skill created done ',skill});
+                    return res.status(200).json({message:'skill created done ',result});
                 }
                 else 
                     return res.status(400).json({message:'skill creation failed '});
@@ -36,7 +32,7 @@ exports.createskill=function(req,res){
 }
 
 exports.updateskill=function(req,res){    
-skillModel.findByIdAndUpdate(req.params.idskill,{$set:{title:req.body.title,category:req.body.category,skills:req.body.skills,price:req.body.price,toprice:req.body.toprice,description:req.body.description}})
+skillModel.findByIdAndUpdate(req.params.idskill,{$set:{title:req.body.title}})
 .exec()
 .then(result=>{
     if(result){
@@ -90,14 +86,14 @@ exports.deleteskill=function(req,res)
         return res.status(500).json(err);
     })
 }
-exports.showskillsByUSer=function(req,res)
+exports.showskillsByUser=function(req,res)
 {
+    console.log(req.params.iduser);
     skillModel.find({user:req.params.iduser})
     .exec()
     .then(skills=>{
         if(skills.length>0){
             return res.status(200).json({skills});
-
         }
         else {
             return res.status(404).json({message:'skills not found'});

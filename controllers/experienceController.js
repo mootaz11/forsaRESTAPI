@@ -7,13 +7,13 @@ exports.createExperience=function(req,res){
         _id:new mongoose.Types.ObjectId(),
         title:req.body.title,
         duration:req.body.duration,
-        description:req.body.description
-
+        description:req.body.description,
+        user:req.params.iduser
     });
-    
     experience.save()
     .then(experience=>{
         if(experience){
+            console.log(experience)
             userModel.findByIdAndUpdate(req.params.iduser,{$push:{experiences:experience}})
             .exec()
             .then(result=>{
@@ -24,6 +24,7 @@ exports.createExperience=function(req,res){
                     return res.status(400).json({message:'experience failed '});
             })
             .catch(err=>{
+                console.log(err)
                 return res.status(500).json({err});
             })
         }
@@ -93,7 +94,7 @@ exports.showAllexperiencesByuser=function(req,res)
     experienceModel.find({user:req.params.iduser})
     .exec()
     .then(experiences=>{
-        if(experiences.length>0){
+        if(experiences.length>=0){
             return res.status(200).json({experiences});
 
         }

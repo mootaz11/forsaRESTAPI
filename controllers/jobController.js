@@ -33,12 +33,10 @@ exports.createJob=function(req,res){
         skills:req.body.skills,
         price:req.body.price,
         time:req.body.time,
+        user:req.params.iduser,
         description:req.body.description,
         likes:[],
         createdAt:new Date().getTime()
-
-
-
     });
     job.save()
     .then(job=>{
@@ -63,6 +61,7 @@ exports.createJob=function(req,res){
 }
 
 exports.updateJob=function(req,res){
+    console.log(req.body)
 jobModel.findByIdAndUpdate(req.params.idjob,{$set:{title:req.body.title,category:req.body.category,skills:req.body.skills,price:req.body.price,time:req.body.time,description:req.body.description}})
 .exec()
 .then(result=>{

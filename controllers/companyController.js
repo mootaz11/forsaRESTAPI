@@ -84,10 +84,10 @@ companyModel.findOne({email:req.body.email})
                     country:req.body.country,
                     email:req.body.email,
                     password:hashedPass,
-                    image:req.file.path,
-                    Location:req.body.location,
-                    totalEmployees:req.body.employeesNumber,
-                    foundationDate:req.body.foundationDate
+                    image:"",
+                    Location:"",
+                    totalEmployees:0,
+                    foundationDate:""
             });
 
 

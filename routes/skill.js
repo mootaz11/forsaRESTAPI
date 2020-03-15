@@ -6,9 +6,6 @@ router.post("/:iduser/createskill",skillController.createskill);
 router.patch('/:idskill/updateskill',skillController.updateskill);
 router.delete('/:idskill/deleteskill',skillController.deleteskill);
 router.get("/:idskill",skillController.showskill);
-router.get("/:iduser/getAllskills",skillController.showAllskillsByUser);
-
-
-
+router.get("/:iduser/getallskills",skillController.showskillsByUser);
 
 module.exports=router;

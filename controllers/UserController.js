@@ -97,6 +97,58 @@ userModel.find()
 
 }
 
+exports.updateOverview=function(req,res){
+    console.log(req.params.iduser)
+    userModel.findByIdAndUpdate(req.params.iduser,{$set:{overview:req.body.overview}},(err,result)=>{
+        if(err){
+            return Error('error has been occured');
+        }
+        if(result){
+            return res.status(200).json({message:'overview updated'})
+        }
+        else 
+        {
+            return res.status(400).json({message:'update failed'});
+        }
+
+    });
+}
+exports.updateCountry=function(req,res){
+    console.log(req.params.iduser)
+    userModel.findByIdAndUpdate(req.params.iduser,{$set:{country:req.body.country}},(err,result)=>{
+        if(err){
+            return Error('error has been occured');
+        }
+        if(result){
+            return res.status(200).json({message:'country updated'})
+        }
+        else 
+        {
+            return res.status(400).json({message:'update failed'});
+        }
+
+    });
+}
+exports.updateLocation=function(req,res){
+    
+    userModel.findByIdAndUpdate(req.params.iduser,{$set:{location:req.body.location}},(err,result)=>{
+        if(err){
+            return Error('error has been occured');
+        }
+        if(result){
+            console.log("ok")
+            return res.status(200).json({message:'location updated'})
+        }
+        else 
+        {
+            return res.status(400).json({message:'update failed'});
+        }
+
+    });
+}
+
+
+
 exports.signup=function(req,res){
 
     userModel.findOne({email:req.body.email})
@@ -119,12 +171,9 @@ exports.signup=function(req,res){
                     country:req.body.country,
                     email:req.body.email,
                     password:hashedPass,
-                    image:req.file.path,
+                    image:"",
                     title:" "                 
-
                 });
-
-
 
                const transporter = nodemailer.createTransport({
                 service: 'gmail',secure:false,    requireTLS: true,
@@ -174,7 +223,9 @@ exports.signup=function(req,res){
 
 
 exports.updateTitle=function(req,res){
-    userModel.findByIdAndUpdate(req.params.userid,{$set:{title:req.body.title}},(err,result)=>{
+    console.log(req.params.iduser)
+    console.log(req.body.title)
+    userModel.findByIdAndUpdate(req.params.iduser,{$set:{title:req.body.title}},(err,result)=>{
         if(err){
             return Error('error has been occured');
         }
@@ -343,12 +394,12 @@ exports.updateImage=function(req,res){
             .exec()
             .then(result=>{
                 if(result){
-                    path="C:\\Users\\pc\\Desktop\\FORSA\\"+user.image;
-                    fs.unlink(path,err=>{
+                    path=user.image;
+                    /*fs.unlink(path,err=>{
                         if(err){
                             throw err;
                         }
-                    })
+                    })*/
                     return res.send({message:"update image done"})
                 }
 
@@ -379,19 +430,17 @@ exports.updateCover=function(req,res){
             .then(result=>{
                 if(result){
                     if(user.cover!==""){
-                    path="C:\\Users\\pc\\Desktop\\FORSA\\"+user.cover;
-                    fs.unlink(path,err=>{
+                    path=user.cover;
+                    /*fs.unlink(path,err=>{
                         if(err){
                             throw err;
                         }
-                    })
+                    })*/
                     return res.status(200).json({message:'cover update done with delete image from uploads '});
 
                      }
                      return res.status(200).json({message:'cover update done'});
-
             }
-
             })
             .catch(err=>{
                 return res.status(500).json({err});
@@ -438,8 +487,6 @@ exports.updateEmail=function(req,res){
 
                   console.log('Email has been sent successfully');
                   return res.status(200).json({message:'update done successfully'});
-
-
                 }
     
               });

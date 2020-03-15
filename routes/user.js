@@ -6,7 +6,11 @@ const uploadImage = require("../config/multer");
 router.get("/users",userController.getAllusers);
 router.post('/signup',uploadImage.single("image"),userController.signup);
 router.post("/login",userController.login);
-router.get('/:iduser/getProfile',userController.getProfile)
+router.post('/:iduser/updatetitle',userController.updateTitle);
+router.post('/:iduser/updateoverview',userController.updateOverview);
+router.post('/:iduser/updatecountry',userController.updateCountry);
+router.post('/:iduser/updatelocation',userController.updateLocation);
+router.get('/:iduser/getProfile',userController.getProfile);
 router.post('/:iduser/updatecover',uploadImage.single("cover"),userController.updateCover)
 router.post('/:iduser/updateImage',uploadImage.single("image"),userController.updateImage);
 router.post('/:iduser/updateEmail',userController.updateEmail);

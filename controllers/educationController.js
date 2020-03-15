@@ -3,11 +3,14 @@ const mongoose = require("mongoose");
 const userModel= require("../models/user");
 
 exports.createEducation=function(req,res){
+    console.log(req.body)
     const education = new educationModel({
         _id:new mongoose.Types.ObjectId(),
-        title:req.body.title,
+        degree:req.body.degree,
+        school:req.body.school,
         duration:req.body.duration,
-        description:req.body.description
+        description:req.body.description,
+        user:req.params.iduser
 
     });
     education.save()
@@ -34,7 +37,8 @@ exports.createEducation=function(req,res){
 }
 
 exports.updateEducation=function(req,res){
-educationModel.findByIdAndUpdate(req.params.ideducation,{$set:{title:req.body.title,duration:req.body.duration,description:req.body.description}})
+    console.log(req.body)
+educationModel.findByIdAndUpdate(req.params.ideducation,{$set:{degree:req.body.degree,duration:req.body.duration,description:req.body.description,school:req.body.school}})
 .exec()
 .then(result=>{
     if(result){
@@ -93,9 +97,8 @@ exports.showAllEducationsByUser=function(req,res)
     educationModel.find({user:req.params.iduser})
     .exec()
     .then(educations=>{
-        if(educations.length>0){
+        if(educations.length>=0){
             return res.status(200).json({educations});
-
         }
         else {
             return res.status(404).json({message:'educations not found'});
