@@ -3,13 +3,60 @@ const mongoose = require("mongoose");
 const userModel= require("../models/user");
 
 
-exports.addLike=function(req,res){
 
-    projectModel.findByIdAndUpdate(req.params.idproject,{$push:{likes:{username:req.body.username,image:req.body.image}}})
+exports.getTopProjects=async function(req,res){
+
+    const projects = await projectModel.find();
+    const topprojects = [];
+    var top = req.params.top;
+    
+    for(var i =0;i<top ; i++)
+    {
+        var max = projects[0];
+        for(var j=1;j<projects.length;j++)
+        {
+            if(max.likes.length<=projects[j].likes.length)
+            {
+                max = projects[j];
+            }
+        }
+        topprojects.splice(projects.indexOf(max),1);
+        topprojects.push(max);
+    }
+    return res.send(topprojects);
+}
+
+
+
+
+
+
+
+exports.getLikesByProject=function(req,res)
+{
+projectModel.findById(req.params.idproject)
+.exec()
+.then(project=>{
+    if(project){
+        return res.status(200).json({likes : project.likes});
+    }
+    else {
+
+        return res.status(404).json({message:'project not found'});
+    
+    }
+})
+.catch(err=>{return res.status(500).json({err})});
+
+}
+
+exports.addLike=async function(req,res){
+    const user = await userModel.findById(req.params.userid);
+    projectModel.findByIdAndUpdate(req.params.idproject,{$push:{likes:{username:user.fullname,image:user.image}}})
     .exec()
     .then(result=>{
         if(result){
-            return res.send(result);
+            return res.send(result.likes);
         }
         else {
             return res.status(400).json({message:'update failed'});

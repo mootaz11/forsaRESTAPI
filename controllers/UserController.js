@@ -7,7 +7,82 @@ const jwt = require("jsonwebtoken");
 
 
 
-exports.getFeeds=function(req,res)
+exports.getTopprofiles=async function(req,res)
+{
+
+const users = await userModel.find({_id:{$nin:[req.params.iduser]}});
+const topProfiles = [];
+
+var top = req.params.top;
+
+for(var i =0;i<top ; i++)
+{
+    var max = users[0];
+    for(var j=1;j<users.length;j++)
+    {
+        if(max.friendlist.length<=users[j].friendlist.length)
+        {
+            max = users[j];
+        }
+    }
+    topProfiles.splice(users.indexOf(max),1);
+    topProfiles.push(max);
+}
+return res.send(topProfiles);
+
+
+}
+
+
+
+
+
+
+exports.getOnlinefriends= function(req,res)
+{
+    const onlineFriends=[];
+    userModel.findById(req.params.iduser, async (err,user)=>{
+        if(err)
+        {
+            throw new Error("error");
+        }
+        if(user){
+                for(var i = 0 ; i< user.friendlist.length;i++)
+                {
+                    const friend= await userModel.findById(user.friendlist[i].iduser);
+                    if(friend.status===1)
+                    {
+                        onlineFriends.push(user.friendlist[i]);
+                     }
+     
+                }
+            return res.send(onlineFriends);
+        }
+        else {
+            return res.status(404).json({message:'user not found'});
+        }
+    })
+}
+
+
+
+
+exports.getFriendList=function(req,res){
+    userModel.findById(req.params.iduser)
+    .then(user=>{
+        if(user){
+            return res.send(user.friendlist)
+        }
+        else {
+            res.status(404).json({message:'user not found'});
+        }
+    })
+    .catch(err=>{
+        return res.status(500).json(err);
+    })
+}
+
+exports.getLatestFeeds=function(req,res)
 {
     tabfeeds=[];
 userModel.findById(req.params.iduser)
@@ -20,23 +95,31 @@ userModel.findById(req.params.iduser)
                 .exec()
                 .then(result=>{
                     if(result){
+                        
                         result.jobs.forEach(element=>{
-                            tabfeeds.push({job:element,userImage:user.image,userid:user._id,userCountry:user.country,userJob:user.title});
+
+                            tabfeeds.push({job:element,userImage:user.image,userid:user._id,userCountry:user.country,userJob:user.title,date:element.createdAt});
+                        
                         })
                         result.projects.forEach(element=>{
-                            tabfeeds.push({project:element,user:user.image,userid:user._id,userCountry:user.country,userJob:user.title});
+                            tabfeeds.push({project:element,user:user.image,userid:user._id,userCountry:user.country,userJob:user.title,date:element.createdAt});
+                        });
+                        
+                        tabfeeds.sort((a,b)=>{
+                        return  -(a.date-b.date)
                         })
-                        return res.send(tabfeeds);
 
+                        return res.send(tabfeeds);
                     }
                     else {
                         return res.send({message:'no feeds'});
                     }                    
                 })
-                .catch(err=>{return res.status(500).json(err)})
+                .catch(err=>{console.log(err)})
     });
     
 })
+.catch(err=>{return res.status(500).json({err})})
 }
 
 exports.showRequests=function(req,res){

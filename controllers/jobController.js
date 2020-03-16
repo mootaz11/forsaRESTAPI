@@ -3,9 +3,10 @@ const mongoose = require("mongoose");
 const userModel= require("../models/user");
 
 
-exports.addLike=function(req,res){
 
-    jobModel.findByIdAndUpdate(req.params.idjob,{$push:{likes:{username:req.body.username,image:req.body.image}}})
+exports.addLike=async function(req,res){
+    const user = await userModel.findById(req.params.userid);
+    jobModel.findByIdAndUpdate(req.params.idjob,{$push:{likes:{username:user.fullname,image:user.image}}})
     .exec()
     .then(result=>{
         if(result){
@@ -20,10 +21,50 @@ exports.addLike=function(req,res){
     });
 }
 
+exports.gettopjobs=async function(req,res){
+
+    const jobs = await jobModel.find();
+    const topjobs = [];
+    var top = req.params.top;
+    
+    for(var i =0;i<top ; i++)
+    {
+        var max = jobs[0];
+        for(var j=1;j<jobs.length;j++)
+        {
+            if(max.likes.length<=jobs[j].likes.length)
+            {
+                max = jobs[j];
+            }
+        }
+        topjobs.splice(jobs.indexOf(max),1);
+        topjobs.push(max);
+    }
+    return res.send(topjobs);
+}
 
 
 
 
+
+
+
+
+
+exports.getLikesByJob=function(req,res)
+{
+jobModel.findById(req.params.idjob)
+.exec()
+.then(job=>{
+    if(job){
+        return res.status(200).json({likes : job.likes});
+    }
+    else {
+        return res.status(404).json({message:'job not found'});
+    }
+})
+.catch(err=>{return res.status(500).json({err})});
+}
 
 exports.createJob=function(req,res){
     const job = new jobModel({
@@ -37,7 +78,7 @@ exports.createJob=function(req,res){
         description:req.body.description,
         likes:[],
         createdAt:new Date().getTime()
-    });
+        });
     job.save()
     .then(job=>{
         if(job){
@@ -132,3 +173,23 @@ exports.showJobsByUser=function(req,res)
     })
     .catch(err=>{return res.status(500).json(err)})
 }
+
+
+exports.addLike=async function(req,res){
+    const user = await userModel.findById(req.params.userid);
+    jobModel.findByIdAndUpdate(req.params.idjob,{$push:{likes:{username:user.username,image:user.image}}})
+    .exec()
+    .then(result=>{
+        if(result){
+            return res.send(result);
+        }
+        else {
+            return res.status(400).json({message:'update failed'});
+        }
+    })
+    .catch(err=>{
+        return res.status(500).json(err);
+    });
+}
+
+
