@@ -29,11 +29,38 @@ for(var i =0;i<top ; i++)
     topProfiles.push(max);
 }
 return res.send(topProfiles);
-
-
 }
 
+exports.getProfileFeeds=function(req,res){
+    const tabfeeds=[];
+    userModel.findById(req.params.iduser)
+    .populate('jobs')
+    .populate('projects')
+    .exec()
+    .then(result=>{
 
+        if(result){
+                result.jobs.forEach(element=>{
+
+                tabfeeds.push({job:element,userImage:result.image,userid:result._id,userCountry:result.country,userJob:result.title,date:element.createdAt});
+            
+            })
+            result.projects.forEach(element=>{
+                tabfeeds.push({project:element,user:result.image,userid:result._id,userCountry:result.country,userJob:result.title,date:element.createdAt});
+            });
+            
+            tabfeeds.sort((a,b)=>{
+            return  -(a.date-b.date)
+            })
+
+            return res.send(tabfeeds);
+        }
+        else {
+            return res.send({message:'no feeds'});
+        }                    
+    })
+    .catch(err=>{console.log(err)})
+}
 
 
 
