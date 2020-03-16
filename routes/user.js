@@ -20,6 +20,7 @@ router.post('/:iduser/desactivateAccount',userController.DesactivateAccount);
 router.post('/:iduser/updateStatus',userController.updateStatus);
 router.get('/loginWithgoogle',userController.loginGoogle);
 router.get('/:iduser/getLatestFeeds',userController.getLatestFeeds);
+router.get('/:iduser/getfeedsProfile',userController.getProfileFeeds)
 router.get('/:iduser/getFriendlist',userController.getFriendList);
 router.get('/:iduser/getOnlinefriends',userController.getOnlinefriends);
 router.get('/:iduser/:top/getTopprofiles',userController.getTopprofiles);
