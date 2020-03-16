@@ -19,6 +19,11 @@ router.post('/:iduser/updateinfo',userController.updateInfo);
 router.post('/:iduser/desactivateAccount',userController.DesactivateAccount);
 router.post('/:iduser/updateStatus',userController.updateStatus);
 router.get('/loginWithgoogle',userController.loginGoogle);
-router.get('/:iduser/getFeeds',userController.getFeeds);
+router.get('/:iduser/getLatestFeeds',userController.getLatestFeeds);
+router.get('/:iduser/getFriendlist',userController.getFriendList);
+router.get('/:iduser/getOnlinefriends',userController.getOnlinefriends);
+router.get('/:iduser/:top/getTopprofiles',userController.getTopprofiles);
+
+
 module.exports=router;
 

@@ -8,4 +8,9 @@ router.patch('/:idproject/updateproject',projectController.updateproject);
 router.delete('/:idproject/deleteproject',projectController.deleteproject);
 router.get("/:idproject",projectController.showProject);
 router.get("/:iduser/getAllprojects",projectController.showprojectsByUSer);
+router.post("/:userid/:idproject/addlike",projectController.addLike);
+router.post("/:userid/:idjob/addlike",projectController.addLike);
+router.get("/:idproject/getLikesByproject",projectController.getLikesByProject);
+router.get("/getTopprojects/:top",projectController.getTopProjects);
+
 module.exports=router;
