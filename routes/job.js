@@ -10,6 +10,7 @@ router.get("/:idjob",jobController.showJob);
 router.get("/:iduser/getAllJobs",jobController.showJobsByUser);
 
 router.post("/:userid/:idjob/addlike",jobController.addLike);
+router.post("/:userid/:idjob/dislike",jobController.dislike);
 
 router.get("/:idjob/getlikesByjob",jobController.getLikesByJob);
 

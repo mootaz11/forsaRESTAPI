@@ -38,15 +38,13 @@ exports.getProfileFeeds=function(req,res){
     .populate('projects')
     .exec()
     .then(result=>{
-
         if(result){
                 result.jobs.forEach(element=>{
-
-                tabfeeds.push({job:element,userImage:result.image,userid:result._id,userCountry:result.country,userJob:result.title,date:element.createdAt});
+                tabfeeds.push({job:element,date:element.createdAt});
             
             })
             result.projects.forEach(element=>{
-                tabfeeds.push({project:element,user:result.image,userid:result._id,userCountry:result.country,userJob:result.title,date:element.createdAt});
+                tabfeeds.push({project:element,date:element.createdAt});
             });
             
             tabfeeds.sort((a,b)=>{
@@ -81,7 +79,6 @@ exports.getOnlinefriends= function(req,res)
                     {
                         onlineFriends.push(user.friendlist[i]);
                      }
-     
                 }
             return res.send(onlineFriends);
         }
@@ -115,6 +112,20 @@ exports.getLatestFeeds=function(req,res)
 userModel.findById(req.params.iduser)
 .exec()
 .then(user=>{
+    userModel.findById(req.params.iduser)
+    .populate('jobs')
+    .populate('projects')
+    .exec()
+    .then(result=>{
+        if(result){
+                result.jobs.forEach(element=>{
+                tabfeeds.push({job:element,userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:element.createdAt});
+            });
+                result.projects.forEach(element=>{
+                    tabfeeds.push({project:element,userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:element.createdAt});
+            });
+        }
+    })
     user.friendlist.forEach(element => {
                 userModel.findById(element.iduser)
                 .populate('jobs')
@@ -124,13 +135,13 @@ userModel.findById(req.params.iduser)
                     if(result){
                         
                         result.jobs.forEach(element=>{
-
-                            tabfeeds.push({job:element,userImage:user.image,userid:user._id,userCountry:user.country,userJob:user.title,date:element.createdAt});
+                            tabfeeds.push({job:element,userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:element.createdAt});
                         
                         })
                         result.projects.forEach(element=>{
-                            tabfeeds.push({project:element,user:user.image,userid:user._id,userCountry:user.country,userJob:user.title,date:element.createdAt});
+                            tabfeeds.push({project:element,userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:element.createdAt});
                         });
+
                         
                         tabfeeds.sort((a,b)=>{
                         return  -(a.date-b.date)

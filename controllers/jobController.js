@@ -3,10 +3,9 @@ const mongoose = require("mongoose");
 const userModel= require("../models/user");
 
 
-
-exports.addLike=async function(req,res){
+exports.addLike= async function(req,res){
     const user = await userModel.findById(req.params.userid);
-    jobModel.findByIdAndUpdate(req.params.idjob,{$push:{likes:{username:user.fullname,image:user.image}}})
+    jobModel.findByIdAndUpdate(req.params.idjob,{$push:{likes:{userid:user._id,username:user.fullname,image:user.image}}})
     .exec()
     .then(result=>{
         if(result){
@@ -174,10 +173,9 @@ exports.showJobsByUser=function(req,res)
     .catch(err=>{return res.status(500).json(err)})
 }
 
-
-exports.addLike=async function(req,res){
+exports.dislike= async function(req,res){
     const user = await userModel.findById(req.params.userid);
-    jobModel.findByIdAndUpdate(req.params.idjob,{$push:{likes:{username:user.username,image:user.image}}})
+    jobModel.findByIdAndUpdate(req.params.idjob,{$pull:{likes:{userid:user._id,username:user.fullname,image:user.image}}})
     .exec()
     .then(result=>{
         if(result){
@@ -191,5 +189,8 @@ exports.addLike=async function(req,res){
         return res.status(500).json(err);
     });
 }
+
+
+
 
 

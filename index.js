@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require("cors");
 
-
 //routes
 const userRoute=require("./routes/user");
 const experienceRoute=require("./routes/experience");
@@ -25,8 +24,8 @@ app.use(morgan('tiny'));
 
 const password ="4NdwfdVtGM84LID1";
 //mongodb://127.0.0.1:27017/linkedin
-//const uri="mongodb://127.0.0.1:27017/linkedin";
-const uri="mongodb+srv://amara11:"+password+"@cluster0-09veh.mongodb.net/test?retryWrites=true&w=majority";
+const uri="mongodb://127.0.0.1:27017/linkedin";
+//const uri="mongodb+srv://amara11:"+password+"@cluster0-09veh.mongodb.net/test?retryWrites=true&w=majority";
 
 mongoose.connect(uri,{useNewUrlParser:true,useUnifiedTopology:true,useFindAndModify:false})
 
@@ -64,5 +63,4 @@ app.listen(app.get('port'),()=>{
 
 
 
-//N.B: l5edma hethy lkol eli fel backend matbadil feha chey hatta les models matbadalsh fihom 
 

@@ -10,5 +10,4 @@ router.post("/rejectrequest/:friendid/:myid",friendController.rejectRequest);
 router.post("/acceptrequest/:friendid/:myid",friendController.acceptRequest);
 router.post("/deletefriend/:friendid/:myid",friendController.deleteFriend);
 
-
 module.exports=router;

@@ -52,7 +52,23 @@ projectModel.findById(req.params.idproject)
 
 exports.addLike=async function(req,res){
     const user = await userModel.findById(req.params.userid);
-    projectModel.findByIdAndUpdate(req.params.idproject,{$push:{likes:{username:user.fullname,image:user.image}}})
+    projectModel.findByIdAndUpdate(req.params.idproject,{$push:{likes:{userid:user._id,username:user.fullname,image:user.image}}})
+    .exec()
+    .then(result=>{
+        if(result){
+            return res.send(result.likes);
+        }
+        else {
+            return res.status(400).json({message:'update failed'});
+        }
+    })
+    .catch(err=>{
+        return res.status(500).json(err);
+    });
+}
+exports.disLike=async function(req,res){
+    const user = await userModel.findById(req.params.userid);
+    projectModel.findByIdAndUpdate(req.params.idproject,{$pull:{likes:{userid:user._id,username:user.fullname,image:user.image}}})
     .exec()
     .then(result=>{
         if(result){

@@ -9,7 +9,7 @@ const ProjectSchema = new mongoose.Schema({
     toprice:{type:Number,required:true},
     description:{type:String},
     comments:[{type:mongoose.Schema.Types.ObjectId,ref:'comment'}],
-    likes:[{username:String,image:String}],
+    likes:[{userid:mongoose.Schema.Types.ObjectId,username:String,image:String}],
     user:{type:mongoose.Schema.Types.ObjectId,ref:'user'},
     company:{type:mongoose.Schema.Types.ObjectId,ref:'company'},
     createdAt:Date
