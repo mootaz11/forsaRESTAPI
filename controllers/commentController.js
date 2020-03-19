@@ -12,6 +12,8 @@ exports.CreateCommentOnProject=  function(req,res)
         time:new Date().getTime(),
         content:req.body.content,
         user:req.params.userid,
+        username:req.body.name,
+        image:req.body.image,
         project:req.params.projectid
     })
     comment.save()
@@ -42,6 +44,8 @@ exports.CreateCommentOnJob= function(req,res)
         time:new Date().getDate(),
         content:req.body.content,
         user:req.params.userid,
+        username:req.body.name,
+        image:req.body.image,
         job:req.params.jobid
     })
     comment.save()
@@ -51,7 +55,7 @@ exports.CreateCommentOnJob= function(req,res)
             await userModel.findByIdAndUpdate(req.params.userid,{$push:{comments:comment}});
             await jobModel.findByIdAndUpdate(req.params.jobid,{$push:{comments:comment}});
             
-            return res.send({message:'comment created',comment});
+            return res.status(201).send({message:'comment created',comment});
 
         }
         else {
@@ -70,7 +74,7 @@ exports.getCommentsByproject=function(req,res){
     commentModel.find({project:req.params.projectid})
     .exec()
     .then(comments=>{
-        if(comments.length>0)
+        if(comments.length>=0)
         {
             return res.status(200).json({comments});
         }
@@ -89,7 +93,7 @@ exports.getCommentsByJob=function(req,res){
     commentModel.find({job:req.params.jobid})
     .exec()
     .then(comments=>{
-        if(comments.length>0)
+        if(comments.length>=0)
         {
             return res.status(200).json({comments});
         }
