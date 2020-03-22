@@ -26,6 +26,10 @@ router.get('/:iduser/getOnlinefriends',userController.getOnlinefriends);
 router.get('/:iduser/:top/getTopprofiles',userController.getTopprofiles);
 router.post("/updateFoundationDate/:iduser",userController.updateEstablishedSince);
 router.post("/updateNumberofEmployees/:iduser",userController.updateTotalEmployees);
+router.get("/getOtherProfiles/:iduser",userController.getOtherProfiles);
+router.post("/logout/:iduser",userController.logout);
+
+
 
 
 module.exports=router;
