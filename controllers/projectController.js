@@ -178,7 +178,7 @@ exports.showprojectsByUSer=function(req,res)
     projectModel.find({user:req.params.iduser})
     .exec()
     .then(projects=>{
-        if(projects.length>0){
+        if(projects.length>=0){
             return res.status(200).json({projects});
 
         }

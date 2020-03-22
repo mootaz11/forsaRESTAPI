@@ -92,7 +92,7 @@ exports.showskillsByUser=function(req,res)
     skillModel.find({user:req.params.iduser})
     .exec()
     .then(skills=>{
-        if(skills.length>0){
+        if(skills.length>=0){
             return res.status(200).json({skills});
         }
         else {

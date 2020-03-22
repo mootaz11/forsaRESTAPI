@@ -161,7 +161,7 @@ exports.showJobsByUser=function(req,res)
     jobModel.find({user:req.params.iduser})
     .exec()
     .then(jobs=>{
-        if(jobs.length>0){
+        if(jobs.length>=0){
             return res.status(200).json({jobs});
 
         }

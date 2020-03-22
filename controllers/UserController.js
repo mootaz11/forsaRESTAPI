@@ -326,8 +326,9 @@ exports.signup=function(req,res){
                     email:req.body.email,
                     category:req.body.category,
                     password:hashedPass,
-                    image:"",
-                    title:" "                 
+                    image:"uploads\1584895914321user-pro-img.png",
+                    title:" ",
+                    cover:"uploads\1584439090144about.png"                 
                 });
 
                const transporter = nodemailer.createTransport({
