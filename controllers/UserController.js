@@ -5,6 +5,40 @@ const fs = require("fs");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 
+exports.logout= function(res,res){
+userModel.findByIdAndUpdate(req.params.iduser,{$set:{status:0}},(err,result)=>{
+    if(err){
+        throw new Error("update failed");
+    }
+    if(result){
+        return res.status(200);
+    }
+    else {
+        return res.status(401);
+    }
+})
+}
+
+
+
+exports.getOtherProfiles= async function(req,res){
+    const users = await userModel.find({_id:{$nin:[req.params.iduser]}});
+    var other_profiles=[]
+
+    users.forEach(user=>{
+        
+        if(user.friendlist.findIndex(friend=>friend.iduser!==req.params.iduser))
+            {
+                other_profiles.push(user);
+            }
+            
+    });
+
+    return res.send(other_profiles);
+
+
+
+}
 
 
 exports.getTopprofiles=async function(req,res)
@@ -25,7 +59,7 @@ for(var i =0;i<top ; i++)
             max = users[j];
         }
     }
-    topProfiles.splice(users.indexOf(max),1);
+    users.splice(users.indexOf(max),1);
     topProfiles.push(max);
 }
 return res.send(topProfiles);
@@ -93,9 +127,18 @@ exports.getOnlinefriends= function(req,res)
 
 exports.getFriendList=function(req,res){
     userModel.findById(req.params.iduser)
-    .then(user=>{
+    .then(async user=>{
+        
         if(user){
-            return res.send(user.friendlist)
+            const  friendList=[];
+      for(var i =0 ;i<user.friendlist.length;i++)
+        {
+            
+        const result  = await userModel.findById(user.friendlist[i].iduser) 
+        friendList.push(result);
+
+        }
+            return res.send(friendList);
         }
         else {
             res.status(404).json({message:'user not found'});
@@ -415,9 +458,19 @@ userModel.findOne({email:req.body.email})
                     throw err;
                 }
                 if(same){
-                 const token=jwt.sign({username:user.fullname,user_id:user._id},"Secret",{expiresIn:60*60*60})
-                    return res.status(200).json({message:'login successfully',token});
+                    user.status=1;
+                    user.save().then(result=>{if(result){
+
+                        const token=jwt.sign({username:user.fullname,user_id:user._id},"Secret",{expiresIn:60*60*60})
+                        return res.status(200).json({message:'login successfully',token});
+    
+                     }});
+                    
+                
                 }
+
+
+
                 else 
                 {
                     return res.status(401).json({message:"password don't match"});
