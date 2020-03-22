@@ -11,7 +11,6 @@ const educationRoute=require("./routes/education");
 const friendRoute = require("./routes/friend");
 const jobRoute = require("./routes/job");
 const projectRoute = require("./routes/project");
-const companyRoute = require("./routes/company");
 const skillRoute = require("./routes/skill");
 const commentRoute = require("./routes/comment");
 
@@ -42,7 +41,6 @@ app.use('/education',educationRoute);
 app.use('/user',userRoute);
 app.use('/experience',experienceRoute);
 app.use('/friend',friendRoute);
-app.use('/company',companyRoute);
 app.use('/project',projectRoute);
 app.use('/job',jobRoute);
 app.use('/comment',commentRoute);
