@@ -36,7 +36,7 @@ exports.gettopjobs=async function(req,res){
                 max = jobs[j];
             }
         }
-        topjobs.splice(jobs.indexOf(max),1);
+        jobs.splice(jobs.indexOf(max),1);
         topjobs.push(max);
     }
     return res.send(topjobs);

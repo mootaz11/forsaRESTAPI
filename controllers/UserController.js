@@ -78,7 +78,7 @@ exports.getOnlinefriends= function(req,res)
                     if(friend.status===1)
                     {
                         onlineFriends.push(user.friendlist[i]);
-                     }
+                    }
                 }
             return res.send(onlineFriends);
         }
@@ -107,6 +107,7 @@ exports.getFriendList=function(req,res){
 }
 
 exports.getLatestFeeds=function(req,res)
+
 {
     tabfeeds=[];
 userModel.findById(req.params.iduser)
@@ -124,6 +125,9 @@ userModel.findById(req.params.iduser)
                 result.projects.forEach(element=>{
                     tabfeeds.push({project:element,userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:element.createdAt});
             });
+            if(user.friendlist.length==0){
+                return res.send(tabfeeds)
+            }
         }
     })
     user.friendlist.forEach(element => {
@@ -141,21 +145,17 @@ userModel.findById(req.params.iduser)
                         result.projects.forEach(element=>{
                             tabfeeds.push({project:element,userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:element.createdAt});
                         });
-
-                        
                         tabfeeds.sort((a,b)=>{
                         return  -(a.date-b.date)
                         })
-
-                        return res.send(tabfeeds);
+                        return res.send(tabfeeds)
                     }
-                    else {
-                        return res.send({message:'no feeds'});
-                    }                    
+                    else{
+                        return res.send(tabfeeds)
+                    }
                 })
                 .catch(err=>{console.log(err)})
     });
-    
 })
 .catch(err=>{return res.status(500).json({err})})
 }
@@ -179,7 +179,40 @@ exports.showRequests=function(req,res){
     
     }
 
-
+    exports.updateTotalEmployees=function(req,res){
+        userModel.findByIdAndUpdate(req.params.iduser,{$set:{totalEmployees:req.body.totalEmployees}})
+        .exec()
+        .then(result=>{
+            if(result){
+                return res.status(200).json({message:'number of employees updated',result});
+        }
+        else {
+            return res.status(400).json({message:'update failed'});
+        }
+    }
+    )
+        .catch(err=>{
+            return res.status(500).json(err);
+        })
+    }
+    exports.updateEstablishedSince=function(req,res){
+    
+        userModel.findByIdAndUpdate(req.params.iduser,{$set:{foundationDate:req.body.foundationDate}})
+        .exec()
+        .then(result=>{
+            if(result){
+                return res.status(200).json({message:' foundation Date updated',result});
+        }
+        else {
+            return res.status(400).json({message:'update failed'});
+        }
+    }
+    )
+        .catch(err=>{
+            return res.status(500).json(err);
+        })
+    
+    }
 
 exports.searchFriend=function(req,res){
     userModel.find({"fullname": /req.body.fullname/})
@@ -291,6 +324,7 @@ exports.signup=function(req,res){
                     fullname : req.body.fullname,
                     country:req.body.country,
                     email:req.body.email,
+                    category:req.body.category,
                     password:hashedPass,
                     image:"",
                     title:" "                 
