@@ -460,10 +460,8 @@ userModel.findOne({email:req.body.email})
                 if(same){
                     user.status=1;
                     user.save().then(result=>{if(result){
-
                         const token=jwt.sign({username:user.fullname,user_id:user._id},"Secret",{expiresIn:60*60*60})
                         return res.status(200).json({message:'login successfully',token});
-    
                      }});
                     
                 
