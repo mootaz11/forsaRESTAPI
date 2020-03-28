@@ -5,7 +5,7 @@ const fs = require("fs");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 
-exports.logout= function(res,res){
+exports.logout= function(req,res){
 userModel.findByIdAndUpdate(req.params.iduser,{$set:{status:0}},(err,result)=>{
     if(err){
         throw new Error("update failed");
