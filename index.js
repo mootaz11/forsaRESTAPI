@@ -13,18 +13,27 @@ const jobRoute = require("./routes/job");
 const projectRoute = require("./routes/project");
 const skillRoute = require("./routes/skill");
 const commentRoute = require("./routes/comment");
+const messageRoute=require("./routes/message");
 const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 3030 });
+const messageController = require("./controllers/messageController");
+const wss = new WebSocket.Server({port:3030});
 
 wss.on('connection', function connection(ws) {
+  console.log('connectionnnnn');
     ws.on('message', function incoming(data) {
+
+
       wss.clients.forEach(function each(client) {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(data);
+        if (client !== ws && client.readyState === WebSocket.OPEN) 
+        {
+           messageController.createMessageRealtime(data);          
+           client.send(data);
         }
+
       });
     });
   });
+
 
 const app=Express()
 
@@ -35,8 +44,9 @@ app.use(morgan('tiny'));
 
 
 const password ="4NdwfdVtGM84LID1";
-const uri="mongodb://127.0.0.1:27017/linkedin";
-//const uri="mongodb+srv://amara11:"+password+"@cluster0-09veh.mongodb.net/test?retryWrites=true&w=majority";
+//const uri="mongodb://127.0.0.1:27017/linkedin";
+
+const uri="mongodb+srv://amara11:"+password+"@cluster0-09veh.mongodb.net/test?retryWrites=true&w=majority";
 
 mongoose.connect(uri,{useNewUrlParser:true,useUnifiedTopology:true,useFindAndModify:false})
 
@@ -56,7 +66,7 @@ app.use('/friend',friendRoute);
 app.use('/project',projectRoute);
 app.use('/job',jobRoute);
 app.use('/comment',commentRoute);
-
+app.use('/message',messageRoute);
 
 
 
