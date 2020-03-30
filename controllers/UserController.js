@@ -27,12 +27,13 @@ exports.getOtherProfiles= async function(req,res){
 
     users.forEach(user=>{
         
-        if(user.friendlist.findIndex(friend=>friend.iduser!==req.params.iduser))
+        if(user.friendlist.findIndex(friend=>friend.iduser.toString()!==req.params.iduser.toString())===-1)
             {
                 other_profiles.push(user);
             }
             
     });
+
 
     return res.send(other_profiles);
 
