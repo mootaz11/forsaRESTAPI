@@ -19,14 +19,12 @@ const messageController = require("./controllers/messageController");
 const wss = new WebSocket.Server({port:3030});
 
 wss.on('connection', function connection(ws) {
-  console.log('connectionnnnn');
+  console.log('connected websocket');
     ws.on('message', function incoming(data) {
-
-
+      messageController.createMessageRealtime(data);          
       wss.clients.forEach(function each(client) {
         if (client !== ws && client.readyState === WebSocket.OPEN) 
         {
-           messageController.createMessageRealtime(data);          
            client.send(data);
         }
 
@@ -44,9 +42,9 @@ app.use(morgan('tiny'));
 
 
 const password ="4NdwfdVtGM84LID1";
-//const uri="mongodb://127.0.0.1:27017/linkedin";
+const uri="mongodb://127.0.0.1:27017/linkedin";
 
-const uri="mongodb+srv://amara11:"+password+"@cluster0-09veh.mongodb.net/test?retryWrites=true&w=majority";
+//const uri="mongodb+srv://amara11:"+password+"@cluster0-09veh.mongodb.net/test?retryWrites=true&w=majority";
 
 mongoose.connect(uri,{useNewUrlParser:true,useUnifiedTopology:true,useFindAndModify:false})
 
