@@ -40,58 +40,34 @@ if(conversation.length>req.params.lengthmsgs){
 res.send(conversation);
 }
 
-exports.getFriendsMessages=async function(req,res){
-    var messageBox = [];
-    const user = await  userModel.findById(req.params.iduser);
-    var friendlist=user.friendlist
-    var messages = await messageModel.find();
-        messages=messages.reverse();
-        for(let j= 0 ; j<friendlist.length;j++)
-        {
-                    const index = messages.findIndex(message=> (message.idsender.toString()===friendlist[j].iduser.toString())
-                    &&(message.idreceiver.toString()===req.params.iduser.toString()));                    
-                    const friend = await userModel.findById(friendlist[j].iduser);
-                    messageBox.push({message:messages[index],friend:friend});
-                    messages=messages.filter(message=>{
-                        return message.idsender!==friendlist[j].iduser
-                   });
-        }    
-        return res.status(200).json(messageBox.slice(0,req.params.lengthbox));
-    }
 
 
 
 
 exports.getMessagesfromOthers= async function(req,res)
-{   var messageBox=[];
-    const users = await userModel.find({_id:{$nin:[req.params.iduser]}});
+{   var messagesSearchs=[];
     var messages = await messageModel.find();
-    var other_profiles=[]
-    users.forEach(user=>{
-        if((user.friendlist.findIndex(friend=> friend.iduser.toString() === req.params.iduser.toString() ))===-1)
-        {
-        other_profiles.push(user);
-        }
-      });
-      for(let j= 0 ; j<other_profiles.length;j++)
-      {
-                  const index = messages.findIndex(message=>
-                    message.idsender.toString() === other_profiles[j]._id.toString()
-                    &&(message.idreceiver.toString()===req.params.iduser.toString())
-                    );                    
-
-                  if(index>=0)
-                {
-                    messageBox.push({message:messages[index],friend:other_profiles[j]});
-                    messages=messages.filter(message=>{
-                    return message.sender.toString()!==other_profiles[j]._id.toString()
-                   });
+    var users=await userModel.find();
+    messages.forEach(message=>{
+                  if(message.idsender==req.params.iduser) 
+                    {messagesSearchs.push({message:message,friend:message.idreceiver});}
+                  if(message.idreceiver==req.params.iduser) 
+                  {messagesSearchs.push({message:message,friend:message.idsender});} 
                 }
-        }    
-        return res.status(200).json(messageBox);
-      
+         );
+    
+    messagesSearchs=messagesSearchs.reverse();
+    var messageBox=[];
+    messagesSearchs.forEach( message=>{
+        const index=messageBox.findIndex(messagebox=> messagebox.user._id.toString()==message.friend.toString())
+        if(index==-1)
+        {const index2=users.findIndex(user=> user._id.toString()==message.friend)
+        messageBox.push({message,user:users[index2]});}
+    })
+    if(messageBox.length>req.params.lengthbox){
+    messageBox=messageBox.splice(messageBox.length-req.params.lengthbox,messageBox.length)}
+        return res.send(messageBox);
     }
-
 
 
 

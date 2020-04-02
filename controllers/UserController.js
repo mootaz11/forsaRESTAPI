@@ -20,24 +20,24 @@ userModel.findByIdAndUpdate(req.params.iduser,{$set:{status:0}},(err,result)=>{
 }
 
 
-
 exports.getOtherProfiles= async function(req,res){
-    const users = await userModel.find({_id:{$nin:[req.params.iduser]}});
+    const users = await userModel.find( { _id:{$nin:[req.params.iduser]}} );
     var other_profiles=[]
-
     users.forEach(user=>{
-        
-        if(user.friendlist.findIndex(friend=>friend.iduser.toString()!==req.params.iduser.toString())===-1)
+        var index=-1;
+        for(i=0;i<user.friendlist.length;i++){
+            if(user.friendlist[i].iduser==req.params.iduser){
+                index=i;
+            }
+        }
+        if(index==-1)
             {
                 other_profiles.push(user);
+                index=-1;
             }
-            
     });
-
-
+    console.log(other_profiles)
     return res.send(other_profiles);
-
-
 
 }
 
