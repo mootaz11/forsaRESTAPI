@@ -24,6 +24,7 @@ router.get('/:iduser/getfeedsProfile',userController.getProfileFeeds)
 router.get('/:iduser/getFriendlist',userController.getFriendList);
 router.get('/:iduser/getOnlinefriends',userController.getOnlinefriends);
 router.get('/:iduser/:top/getTopprofiles',userController.getTopprofiles);
+router.get('/:iduser/:Nbsug/getsuggestions',userController.getSuggestions);
 router.post("/updateFoundationDate/:iduser",userController.updateEstablishedSince);
 router.post("/updateNumberofEmployees/:iduser",userController.updateTotalEmployees);
 router.get("/getOtherProfiles/:iduser",userController.getOtherProfiles);

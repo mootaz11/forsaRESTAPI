@@ -14,14 +14,21 @@ const projectRoute = require("./routes/project");
 const skillRoute = require("./routes/skill");
 const commentRoute = require("./routes/comment");
 const messageRoute=require("./routes/message");
+const notificationRoute=require("./routes/notification");
 const WebSocket = require('ws');
 const messageController = require("./controllers/messageController");
+const notificationController=require("./controllers/notificationController")
 const wss = new WebSocket.Server({port:3030});
 
 wss.on('connection', function connection(ws) {
-  console.log('connected websocket');
     ws.on('message', function incoming(data) {
-      messageController.createMessageRealtime(data);          
+      const _data= JSON.parse(data)
+      if(_data.idpost || _data.idrequest){
+        notificationController.createNotification(data)
+      }     
+      else{
+        messageController.createMessageRealtime(data);
+      }    
       wss.clients.forEach(function each(client) {
         if (client !== ws && client.readyState === WebSocket.OPEN) 
         {
@@ -65,6 +72,7 @@ app.use('/project',projectRoute);
 app.use('/job',jobRoute);
 app.use('/comment',commentRoute);
 app.use('/message',messageRoute);
+app.use('/notification',notificationRoute)
 
 
 

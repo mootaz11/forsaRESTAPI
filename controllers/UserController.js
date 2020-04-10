@@ -36,7 +36,6 @@ exports.getOtherProfiles= async function(req,res){
                 index=-1;
             }
     });
-    console.log(other_profiles)
     return res.send(other_profiles);
 
 }
@@ -66,6 +65,35 @@ for(var i =0;i<top ; i++)
 return res.send(topProfiles);
 }
 
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
+}
+
+exports.getSuggestions= async function(req,res){
+    const user = await userModel.findById(req.params.iduser);
+    let suggestions=[]
+    for(i=0;i<user.friendlist.length;i++){
+        const _user=await userModel.findById(user.friendlist[i].iduser)
+        for(j=0;j<_user.friendlist.length;j++){
+            const __user=await userModel.findById(_user.friendlist[j].iduser)
+            const index=user.friendlist.findIndex(exist => exist.iduser == __user._id)
+            if(index==-1 && __user._id!=req.params.iduser){
+            suggestions.push(__user)}
+        }
+    }
+    suggestions=shuffle(suggestions)
+    if(suggestions.length>req.params.Nbsug){
+        suggestions=suggestions.splice(suggestions.length-req.params.Nbsug,suggestions.length)}
+    return res.send(suggestions)
+}
+
 exports.getProfileFeeds=function(req,res){
     const tabfeeds=[];
     userModel.findById(req.params.iduser)
@@ -76,12 +104,10 @@ exports.getProfileFeeds=function(req,res){
         if(result){
                 result.jobs.forEach(element=>{
                 tabfeeds.push({job:element,date:element.createdAt});
-            
             })
             result.projects.forEach(element=>{
                 tabfeeds.push({project:element,date:element.createdAt});
             });
-            
             tabfeeds.sort((a,b)=>{
             return  -(a.date-b.date)
             })
@@ -151,17 +177,16 @@ exports.getFriendList=function(req,res){
 }
 
 exports.getLatestFeeds=function(req,res)
-
 {
-    tabfeeds=[];
-userModel.findById(req.params.iduser)
+ tabfeeds=[];
+ userModel.findById(req.params.iduser)
 .exec()
-.then(user=>{
-    userModel.findById(req.params.iduser)
+.then(async user=>{
+    result=await userModel.findById(req.params.iduser)
     .populate('jobs')
     .populate('projects')
-    .exec()
-    .then(result=>{
+    .exec();
+    
         if(result){
                 result.jobs.forEach(element=>{
                 tabfeeds.push({job:element,userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:element.createdAt});
@@ -169,39 +194,32 @@ userModel.findById(req.params.iduser)
                 result.projects.forEach(element=>{
                     tabfeeds.push({project:element,userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:element.createdAt});
             });
-            if(user.friendlist.length==0){
-                return res.send(tabfeeds)
-            }
+           
         }
-    })
-    user.friendlist.forEach(element => {
-                userModel.findById(element.iduser)
+    if(user.friendlist.length==0){
+        return res.send(tabfeeds)
+    } 
+    for(i=0;i<user.friendlist.length;i++){
+                result= await userModel.findById(user.friendlist[i].iduser)
                 .populate('jobs')
                 .populate('projects')
                 .exec()
-                .then(result=>{
+                ;
                     if(result){
-                        
-                        result.jobs.forEach(element=>{
-                            tabfeeds.push({job:element,userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:element.createdAt});
-                        
-                        })
-                        result.projects.forEach(element=>{
-                            tabfeeds.push({project:element,userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:element.createdAt});
-                        });
+                        for(j=0;j<result.jobs.length;j++){
+                        tabfeeds.push({job:result.jobs[j],userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:result.jobs[j].createdAt})
+                        }
+                       for(j=0;j<result.projects.length;j++){
+                        tabfeeds.push({project:result.projects[j],userName:result.fullname,userImage:result.image,userid:result._id,userLocation:result.location,userJob:result.title,date:result.projects[j].createdAt})
+                        }
                         tabfeeds.sort((a,b)=>{
                         return  -(a.date-b.date)
                         })
-                        return res.send(tabfeeds)
-                    }
-                    else{
-                        return res.send(tabfeeds)
-                    }
-                })
-                .catch(err=>{console.log(err)})
-    });
-})
+                       }
+     } return res.send(tabfeeds)
+ }) 
 .catch(err=>{return res.status(500).json({err})})
+
 }
 
 exports.showRequests=function(req,res){
@@ -282,7 +300,7 @@ userModel.find()
 .exec()
 .then(users=>{
 
-    if(users.length>0){
+    if(users.length>=0){
         return res.status(200).json({users});
     }
     else {
